@@ -4,7 +4,9 @@
       Projeção Mensal - Primeiro Ano
     </h3>
     <div class="h-64 sm:h-96">
-      <Line :data="chartData" :options="chartOptions" />
+      <ClientOnly>
+        <Line :data="chartData" :options="chartOptions" />
+      </ClientOnly>
     </div>
   </div>
 </template>
@@ -23,17 +25,22 @@ import {
 import { Line } from "vue-chartjs";
 import type { ChartData, ChartOptions } from "chart.js";
 import { useMarketStore } from "~/stores/marketStore";
+import { useDevice } from "~/composables/useDevice";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+// Registrar componentes do Chart.js apenas no cliente
+if (process.client) {
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
+}
 
+const { isMobile } = useDevice();
 const marketStore = useMarketStore();
 
 const chartData = computed<ChartData<"line">>(() => ({
@@ -111,9 +118,9 @@ const chartOptions = computed<ChartOptions<"line">>(() => ({
       position: "top" as const,
       labels: {
         color: "#ffffff80",
-        boxWidth: window.innerWidth < 768 ? 10 : 40,
+        boxWidth: isMobile.value ? 10 : 40,
         font: {
-          size: window.innerWidth < 768 ? 10 : 12,
+          size: isMobile.value ? 10 : 12,
         },
       },
     },

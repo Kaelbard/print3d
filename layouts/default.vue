@@ -77,6 +77,7 @@
 
     <slot />
   </div>
+  <AIChatWidget />
 </template>
 
 <script setup lang="ts">
